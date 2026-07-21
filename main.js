@@ -1,6 +1,9 @@
 const form = document.getElementById('contact-form');
 const status = document.getElementById('form-status');
 
+// Where inquiries go. Update this if the contact address changes.
+const CONTACT_EMAIL = 'raymond@raymondtechnical.com';
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -26,15 +29,21 @@ form.addEventListener('submit', async (e) => {
 
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
-  btn.textContent = 'Sending…';
+  btn.textContent = 'Opening email…';
 
-  // Replace the action URL below with your form backend (e.g. Formspree, Netlify Forms, etc.)
-  // For now, we simulate a successful submission after a short delay.
-  await new Promise(r => setTimeout(r, 900));
+  // GitHub Pages is static and can't send email server-side. Until a form
+  // backend (e.g. Formspree) is wired in, we hand off to the user's own
+  // email client with everything pre-filled, addressed to Raymond.
+  const subject = encodeURIComponent(`Website inquiry from ${name}`);
+  const body = encodeURIComponent(
+    `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+  );
+  const mailtoLink = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+
+  window.location.href = mailtoLink;
 
   status.className = 'form-status success';
-  status.textContent = 'Message sent! We\'ll be in touch soon.';
-  form.reset();
+  status.textContent = 'Your email app should now be open with this pre-filled — hit send from there.';
   btn.disabled = false;
   btn.textContent = 'Send Message';
 });
